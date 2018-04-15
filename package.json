@@ -1,0 +1,41 @@
+{
+  "name": "nodewebkit-tutorial",
+  "version": "1.0.0",
+  "description": "Simple NodeWebkit Application.... Not sure what it's going do yet though..",
+  "main": "views/index.html",
+  "window": {
+    "toolbar": false
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "app": "nw"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MickStick/NodeWebkit-Tutorial.git"
+  },
+  "keywords": [
+    "NodeJS",
+    "HTML5",
+    "JavaScript"
+  ],
+  "author": "Mikhail Rene Shaw",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MickStick/NodeWebkit-Tutorial/issues"
+  },
+  "homepage": "https://github.com/MickStick/NodeWebkit-Tutorial#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "ejs": "^2.5.8",
+    "express": "^4.16.3",
+    "formidable": "^1.2.1",
+    "mongoose": "^5.0.14",
+    "nw": "^0.29.4",
+    "nwjs": "^1.4.4",
+    "path": "^0.12.7",
+    "sha-256-js": "^1.0.3"
+  }
+}

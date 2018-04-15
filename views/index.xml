@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include includes/head.ejs %>
+<body>
+    <main class="containter green-text">
+        <div class="container">
+                <h1 class="center">Search For A Member</h1>
+                <form autocomplete="false" class="container" action="/search" method="post">
+                    
+                    <div style="display: block; height: 30px !important;" >
+                        <input style="float left; width: 80%" placeholder="Member" readonly type="text" name="data" id="data" onfocus="this.removeAttribute('readonly');"/>
+                        <button style="float: right; width: 19.5%"class="btn green"><i class="material-icons">search</i></button>
+                        <div style="position: ralative; width: 80%;">
+                            <div id="Data" style="height: auto; margin: -25px 0px 20px 0px; padding-left: 2mm; position: relative; background: white; margin-left:-20;">
+                            </div>
+                        </div>
+                    </div>                   
+                   
+                    
+                
+                </form>
+                <pre class="center" id="message"></pre>
+        </div>
+        
+
+    </main>
+    <script language="javascript">
+        $(document).ready(function(){
+
+            // $.ajax({
+            //     type: 'POST',
+            //     url: 'http://localhost:8080\test',
+            //     data: {data: "This is test data."},
+            //     success: function(data){
+            //         $('#message').html(data.message);
+            //         $('#data').html(data.data);
+            //     }
+            // })
+
+            $('input').blur(function() {
+                if(!$(this).val()){
+                    $('#Data').html("");
+                }
+            })
+
+            $('input').bind('input',function(){
+                // let formData = new FormData();
+                // formData.append('data', $(this).val());
+                //$('pre').html(`${$("#message").text()} ${$(this).val()} Changed\n`);
+                
+                $('#Data').html("");
+                $('#Data').css({"borderBottom":"none"});
+                let text = $(this).val();
+                if(text != "" || text != " ") {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'http://localhost:8080/searchDrop',
+                        data: {data: $(this).val()},
+                        success: function(data){
+                                for(let x = 0; x < data.result.length; x++){
+                                    let res = (`<h6><a class="green-text" href="/search/${data.result[x]}">${data.result[x]}</a></h6>`);
+                                    $('#Data').css({"borderLeft":"1px solid black", "borderBottom":"1px solid black", "borderRight":"1px solid black", "border-color":"rgba(30, 150, 90,0.6)"});
+                                    $('#Data').append(res);
+                                }
+                        }
+                    })
+                }
+                 
+                // fetch('http://mik:8080/searchDrop',{
+                //     method: 'POST',
+                //     headers: {
+                //         "Content-Type": "application/json"
+                //     },
+                //     body: JSON.stringify({data: $(this).val()})
+                // })
+                // .then(response => response.json())
+                // .then(function(response){
+                //     $('#Data').html("Here: ");
+                //     $('#Data').html(`${$('#data').html()} ${response.message}`);
+                // })
+            })
+           
+        })
+    </script>
+</body>
+</html>

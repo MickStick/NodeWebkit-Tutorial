@@ -1,0 +1,174 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta name="author" content="Mikhail Rene Shaw">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+        <link rel="shortcut icon" href="../public/static/favicon.ico" />  
+        <link rel="stylesheet"  href="../public/style/style.css">
+        
+        <title>Node Webkit Application</title>
+        <script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    </head>
+<style>
+    .aviPre {
+        width: 30mm;
+        height: 30mm;
+        border-radius: 200%;
+        background: 'ghost-white';
+    }
+</style>
+
+
+<body>
+    <main class="container">
+        <form action="#" method="post" class="container">
+            <div class="input-field">
+                <img alt="no-image" src="../public/static/avi/noimage.jpg" class="aviPre"/>
+            </div>
+            <h5 id="imageErr" class="center"></h5>
+            <div class="file-field input-field">
+                <div class="btn" style="width: 50px; height: 50px; border-radius: 100%;">
+                    <span class="center"><i class="material-icons" style="margin-left: -10px; margin-top: 1mm;">photo</i></span>
+                    <input type="file" id="avi"/>
+                </div>
+                <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text">
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input type="text" name="fname" value=""/>
+                    <label for="fname">First Name</label>
+                </div>
+                <div class="input-field col s6">
+                    <input type="text" name="lname" value=""/>
+                    <label for="lname">Last Name</label>
+                </div>
+            </div>
+            
+            <div class="input-field">
+                <input type="text" name="uname" value=""/>
+                <label for="uname">Username</label>
+            </div>
+            <div class="input-field">
+                <input type="email" name="email" value=""/>
+                <label for="email">Email Address</label>
+            </div>
+            <div class="input-field">
+                <input type="password" name="password" value=""/>
+                <label for="password">Password</label>
+            </div>
+            <div class="input-field">
+                <input type="password" name="rpassword" value=""/>
+                <label for="rpassword">Re-Type Password</label>
+            </div>
+            <button class="btn left" id="regBtn">Register</button>
+            <a href="login.html" class="right">Already Have An Account?</a>
+        </form>
+    </main>
+</body>
+
+<script>
+    $(document).ready(function() {
+        let gui = require('nw.gui');
+        const win = gui.Window.get();
+
+        win.resizeTo(
+            400, 720
+        );
+        $('#avi').on('change', function() {
+            let filename = $(this).val().replace(/([^\\]*\\)*/, '');
+            let pngExt = /^[A-Za-z0-9\W_]+.png$/;
+            let jpgExt = /^[A-Za-z0-9\W_]+.jpg$/;
+            let JPGExt = /^[A-Za-z0-9\W_]+.JPG$/;
+            let jpegExt = /^[A-Za-z0-9\W_]+.jpeg$/;
+            if (pngExt.test(filename) || jpgExt.test(filename) || JPGExt.test(filename) || jpegExt.test(filename)) {
+                PreviewImage(this);
+                $('.aviPre').attr("alt", filename);
+                $('#imageErr').text("");
+            } else if (this.value == "" || this.value == null) {
+
+                $('.aviPre').attr("src", "../public/static/avi/noimage.jpg");
+                $('.aviPre').attr("alt", "no-image");
+                $('#imageErr').text("");
+            } else {
+                $('#imageErr').text("Invalid extension: You may only upload \".png\" or \".jpg\" or \".JPG\" or \".jpeg\" files");
+                $(this).contents(null);
+            }
+        });
+
+        function PreviewImage(file) {
+            var oFReader = new FileReader();
+            oFReader.readAsDataURL(file.files[0]);
+
+            oFReader.onload = function(oFREvent) {
+                $('.aviPre').attr("src", oFREvent.target.result);
+            };
+        };
+
+        $('#regBtn').click(function(e){
+            e.preventDefault();
+
+            let formData = new FormData();
+            const file = $('#avi');
+            const fname = $('input[name="fname"').val();
+            const lname = $('input[name="lname"]').val();
+            const uname = $('input[name="uname"]').val();
+            const email = $('input[name="email"]').val();
+            const password = $('input[name="password"]').val();
+            formData.append('avi', file[0].files[0]);
+            formData.append('fname', fname);
+            formData.append('lname', lname);
+            formData.append('uname', uname);
+            formData.append('email', email);
+            formData.append('password', password);
+            var DATA = {
+                avi: file[0].files[0]
+            }
+            for (var value of formData.values()) {
+            console.log(value); 
+            }
+            console.log(DATA);
+            console.log("Before Ajax");
+
+            fetch('http://localhost:8080/register', {
+                method: 'POST',
+                json: true,
+                /*headers: {
+                    "Content-Type": "application/json"
+                },*/
+                body: formData //JSON.stringify({file: file[0].files[0].name})//({text:"This is text" })//
+            })
+            .then(response => response.json())
+            .then(function(response){
+                if(response.status) {
+                        response.user.password = "garbage";
+                        localStorage.setItem("user", JSON.stringify(response.user));
+                        window.location = "dashboard.html";
+                    }
+            })//(response => console.log('Success:', response))
+            .catch(error => console.error('Error:', error));
+
+            /*$.ajax({
+                type: 'POST',
+                url: 'http://localhost:8080/register',
+                data: JSON.stringify(formData),
+                success: function(data){
+                    alert(JSON.stringify(data));
+                    window.location = "/register";
+                    // if(data.status){
+                    //     window.location = "/dashboard";
+                    // }
+                }
+            })*/
+        });
+    })
+</script>
+</html>

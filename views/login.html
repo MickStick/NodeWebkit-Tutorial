@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta name="author" content="Mikhail Rene Shaw">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+        <link rel="shortcut icon" href="../public/static/favicon.ico" />  
+        <link rel="stylesheet"  href="../public/style/style.css">
+        
+        <title>Node Webkit Application</title>
+        <script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    </head>
+
+    <body>
+        <main class="container">
+            <h4 class="center">Login</h4>
+            <form action="/login" method="post" class="container">
+                <div class="input-field">
+                    <input type="text" name="uname" value=""/>
+                    <label for="uname">Username</label>
+                </div>
+                <div class="input-field">
+                    <input type="password" name="password" value=""/>
+                    <label for="password">Password</label>
+                </div>
+                <button class="btn left" id="logBtn">Login</button>
+                <a href="register.html" class="right">Don't Have An Account?</a>
+                <h5 class="red-text" id="err"></h5>
+            </form>
+        </main>
+    </body>
+
+        <script>
+        $(document).ready(function(){
+            /*let gui = require('nw.gui');
+            const win = gui.Window.get();
+
+            win.resizeTo(
+                400, 650
+            );*/
+
+            $('#logBtn').click(function(e){
+                e.preventDefault();
+
+                let formData = new FormData();
+                const uname = $('input[name="uname"]').val();
+                const password = $('input[name="password"]').val();
+                formData.append('uname', uname);
+                formData.append('password', password);
+
+                fetch('http://localhost:8080/login', {
+                    method: 'POST',
+                    json: true,
+                    /*headers: {
+                        "Content-Type": "application/json"
+                    },*/
+                    body: formData //JSON.stringify({file: file[0].files[0].name})//({text:"This is text" })//
+                })
+                .then(response => response.json())
+                .then(function(response){
+                    //alert(response);
+                    if(response.status) {
+                        $('#err').text("");
+                        response.user.password = "garbage";
+                        localStorage.setItem("user", JSON.stringify(response.user));
+                        window.location = "dashboard.html";
+                    }else {
+                        $('#err').text(response.message);
+                    }
+                })//(response => console.log('Success:', response))
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+
+</html>
